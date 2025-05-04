@@ -1,87 +1,166 @@
-#include<iostream>
-using namespace std; 
-class node{
-  public:
-  int value; 
-  node* next; 
+#include <iostream>
+using namespace std;
+class Node
+{
+public:
+    int value;
+    Node *next;
+    Node *prev;
 
-  node(int val){
-    value = val;
-    next = NULL;
-  }
-
+    Node(int val)
+    {
+        value = val;
+        next = NULL;
+        prev = NULL;
+    }
 };
-void InsertAtHead(node* &head , int value){
-  node* node1 = new node(value);
-  node1 -> next = head;
-  head = node1;
-}
-void InsertAtEnd(node* &head,int value){
-  node* node1 = new node(value);
-  if(head == NULL){
-    head = node1; 
-    return;
-  }
-  node* temp = head; 
-  while(temp->next != NULL){
-    temp = temp->next; 
-  }
-  temp->next= node1; 
-}
-void InsertAtMiddle(node* &head, int value, int position){
-  
-  
-  if(position == 1){
-    InsertAtHead(head,value); 
-    return;
-  }
-  node* node1 = new node(value);
-  node* prev = head; 
-  int count =1; 
-  while(position<(count-1)){
-    prev= prev ->next;
-    count++;
-  }
-  node1 -> next = prev->next; 
-  prev-> next = node1;
-}
-void DeleteAtEnd(node* &head){
-  if(head==NULL){
-    cout<<"No node found";
-    return;
-  }
-  node* second_last= head;
-  while(second_last->next->next!=NULL){
-    second_last= second_last->next;
-  }
-  node* last_node = second_last->next; 
-  second_last->next=NULL; 
-  delete(last_node);
-}
-void DeleteAtHead(node* &head){
-  if(head == NULL){
-    cout<<"no node found";
-    return;
-  }
-  node* temp=head;
-  head = head->next;;
-  delete(temp);
-}
-void display(node* &head){
-  node*temp= head; 
-  while(temp!=NULL){
-      cout<<temp->value<<" -> ";
-      temp = temp->next;
-  }
-  cout<<"NULL";
-}
 
-int main(){
-  node* head = NULL; 
-  InsertAtHead(head,10);
-  InsertAtEnd(head,20);
-  InsertAtMiddle(head,15,2);
-  DeleteAtEnd(head);
-  DeleteAtHead(head);
-display(head);
+void InsertAtHead(Node *&head, int value)
+{
+    Node *node1 = new Node(value);
+    if (head == NULL)
+    {
+        head = node1;
+        return;
+    }
+    node1->next = head;
+    head->prev = node1;
+    head = node1;
+}
+void InsertAtMiddle(Node *&head, int value, int position)
+{
+    if (position == 1)
+    {
+        InsertAtHead(head, value);
+        return;
+    }
+
+    Node *temp = head;
+    for (int i = 1; i < position - 1; i++)
+    {
+        temp = temp->next;
+    }
+    Node *node1 = new Node(value);
+    if (temp->next != NULL)
+    {
+        temp->next->prev = node1;
+    }
+    node1->next = temp->next;
+    temp->next = node1;
+    node1->prev = temp;
+}
+void InsertAtEnd(Node *&head, int value)
+{
+    Node *node1 = new Node(value);
+    if (head == NULL)
+    {
+        head = node1;
+        return;
+    }
+    Node *temp = head;
+    while (temp->next != NULL)
+    {
+        temp = temp->next;
+    }
+    temp->next = node1;
+    node1->prev = temp;
+}
+void DeleteAtHead(Node* &head){
+    if(head == NULL){
+        cout<<"No Node found at head to delete :"<<endl;
+        return;
+    }
+    Node* temp = head; 
+    head = temp -> next;
+    delete(temp);
+}
+void DeleteAtEnd(Node* &head){
+    if(head == NULL){
+        cout<<"No node found to delete"<<endl;
+        return;
+    }
+    Node* temp = head; 
+    while(temp->next != NULL){
+        temp = temp->next;
+    }
+    Node* newlastnode = temp->prev; 
+    newlastnode->next=NULL;
+    delete(temp);
+}
+void backword_display(Node *head)
+{
+    Node *temp = head;
+    while (temp->next)
+    {
+        temp = temp->next;
+    }
+    while (temp)
+    {
+        cout << temp->value << " <--> ";
+        temp = temp->prev;
+    }
+    cout << "NULL" << endl;
+}
+void display(Node *head)
+{
+    if (head == NULL)
+    {
+        cout << "No node Found " << endl;
+        return;
+    }
+    Node *temp = head;
+    while (temp != NULL)
+    {
+        cout << temp->value << " <--> ";
+        temp = temp->next;
+    }
+    cout << "NULL" << endl;
+}
+int main()
+{
+    int choice;
+    cout << "1. Display " << endl;
+    cout << "2. Insert At Head " << endl;
+    cout << "3. Insert At End " << endl;
+    cout << "4. Insert At Middle " << endl;
+    cout << "5. Delete At head "<< endl;
+    Node *head = NULL;
+    while (true)
+    {
+        cout << "Select Operation :";
+        cin >> choice;
+        if (choice == 1)
+        {
+            display(head);
+        }
+        else if (choice == 2)
+        {
+            int value;
+            cout << "Enter the value to be added : ";
+            cin >> value;
+            InsertAtHead(head, value);
+        }
+        else if (choice == 3)
+        {
+            int value;
+            cout << "Enter a value to be added at end :";
+            cin >> value;
+            InsertAtEnd(head, value);
+        }
+        else if (choice == 4)
+        {
+            cout << "Enter the value to be inserted space seperated by location ";
+            int value;
+            int position;
+            cin >> value >> position;
+            InsertAtMiddle(head, value, position);
+        }
+        else if(choice == 5){
+            DeleteAtHead(head);
+        }
+    }
+
+    display(head);
+
+    return 0;
 }
